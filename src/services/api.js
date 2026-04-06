@@ -1,6 +1,10 @@
 import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_URL || '/api';
+const KEEP_ALIVE_INTERVAL = 60000;
+
+let keepAliveTimer = null;
+let isKeepingAlive = false;
 
 export const api = axios.create({
   baseURL,
@@ -33,5 +37,31 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const startKeepAlive = () => {
+  if (isKeepingAlive || !baseURL.includes('vercel')) return;
+  
+  isKeepingAlive = true;
+  
+  const ping = async () => {
+    try {
+      await api.get('/ping');
+      console.log('[KeepAlive] Ping sent');
+    } catch (error) {
+      console.log('[KeepAlive] Ping failed:', error.message);
+    }
+  };
+
+  ping();
+  keepAliveTimer = setInterval(ping, KEEP_ALIVE_INTERVAL);
+};
+
+export const stopKeepAlive = () => {
+  if (keepAliveTimer) {
+    clearInterval(keepAliveTimer);
+    keepAliveTimer = null;
+    isKeepingAlive = false;
+  }
+};
 
 export default api;

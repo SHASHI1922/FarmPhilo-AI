@@ -5,7 +5,10 @@ import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
+import { startKeepAlive } from './services/api';
 import './index.css';
+
+startKeepAlive();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
