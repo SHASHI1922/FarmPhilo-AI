@@ -39,7 +39,7 @@ api.interceptors.response.use(
 );
 
 export const startKeepAlive = () => {
-  if (isKeepingAlive || !baseURL.includes('vercel')) return;
+  if (isKeepingAlive) return;
   
   isKeepingAlive = true;
   
